@@ -63,4 +63,11 @@ for i in range(0, num_records, BATCH_SIZE):
 
 collection.flush()
 
+collection.create_index(
+    field_name="title_embeddings",
+    index_params={"index_type": "IVF_FLAT", "metric_type": "COSINE", "params": {"nlist": 128}}
+)
+
+collection.load()
+
 print("Data with embeddings stored successfully in Milvus.")
