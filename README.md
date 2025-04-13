@@ -10,8 +10,11 @@ Streamlit:
 ```bash
 streamlit run app/main.py
 ```
-## Database
-Hosted on Milvus
+## Movie Database
+VectorDB hosted on Milvus
+
+## User Profile Storage
+Redis
 
 ## Dataset
 Download the dataset: https://grouplens.org/datasets/movielens/tag-genome-2021/
