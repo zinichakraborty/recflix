@@ -1,3 +1,4 @@
+import plotly.graph_objects as go
 import streamlit as st
 import sys
 import os
@@ -12,6 +13,17 @@ def render():
     user_data = get_all_user_data()
 
     if user_data:
+        num_users = len(user_data)
+
+        fig = go.Figure(go.Indicator(
+            mode="number",
+            value=num_users,
+            title={"text": "Total Users"},
+            number={"font": {"size": 48}}
+        ))
+
+        st.plotly_chart(fig, use_container_width=True)
+
         for name, data in user_data.items():
             with st.expander(f"{name}"):
                 st.json(data)
