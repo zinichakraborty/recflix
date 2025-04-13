@@ -4,7 +4,10 @@
 ```bash
 conda env create -f environment.yml
 ```
-
+Then,
+```bash
+conda activate recflix-env
+```
 ## Run App
 Streamlit:
 ```bash

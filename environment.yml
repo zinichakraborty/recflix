@@ -6,3 +6,7 @@ dependencies:
       - protobuf==3.20.0
       - grpcio-tools
       - pymilvus==2.5.6
+      - "pymilvus[model]"
+      - python-dotenv
+      - sentence-transformers
+      - tf-keras
