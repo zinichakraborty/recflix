@@ -1,3 +1,9 @@
+# Data
+/movie_dataset_public_final
+
+# Mac
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
