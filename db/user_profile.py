@@ -35,3 +35,16 @@ def get_user_data(name):
     else:
         print(f"No data found for user: {name}")
         return None
+
+def get_all_user_data():
+    all_keys = r.keys("*")
+    all_data = {}
+
+    for key in all_keys:
+        data = r.get(key)
+        try:
+            all_data[key] = json.loads(data)
+        except (TypeError, json.JSONDecodeError):
+            all_data[key] = data
+
+    return all_data
