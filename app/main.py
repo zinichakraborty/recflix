@@ -5,6 +5,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import db.user_profile as user_profile
+import db.recommend as recommend
 import app.user_analytics as user_analytics
 
 st.title("🎬 Recflix")
@@ -28,7 +29,14 @@ with tab1:
     if st.button("Submit"):
         st.success(f"Thanks, {user_name}! Getting your recommendations...")
         user_profile.save_user_data(user_name, watched_movies, user_preferences)
-        user_data = user_profile.get_user_data(user_name)
+        st.subheader("Recommendations based on your preferences:")
+        results = recommend.recommend_movies(user_preferences)
+        for i, movie in enumerate(results):
+            st.markdown(f"**{i+1}. {movie['title']}** (Rating: {movie['avgRating']})")
+            st.markdown(f"• Directed by: {movie['directedBy']}")
+            st.markdown(f"• Starring: {movie['starring']}")
+            st.markdown(f"• IMDb ID: {movie['imdbId']}")
+            st.markdown("---")
 
 with tab2:
     user_analytics.render()

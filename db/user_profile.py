@@ -48,3 +48,15 @@ def get_all_user_data():
             all_data[key] = data
 
     return all_data
+
+def delete_all_user_data():
+    all_keys = r.keys("*")
+    if not all_keys:
+        print("No keys to delete.")
+        return
+
+    r.delete(*all_keys)
+    print(f"Deleted {len(all_keys)} keys from Redis.")
+
+if __name__ == "__main__":
+    delete_all_user_data()

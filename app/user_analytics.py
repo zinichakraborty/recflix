@@ -13,7 +13,7 @@ def render():
 
     if user_data:
         for name, data in user_data.items():
-            with st.expander(f"User: {name}"):
+            with st.expander(f"{name}"):
                 st.json(data)
     else:
         st.info("No user data found in Redis.")
