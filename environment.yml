@@ -10,3 +10,5 @@ dependencies:
       - python-dotenv
       - sentence-transformers
       - tf-keras
+      - streamlit
+      - redis
