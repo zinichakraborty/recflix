@@ -1,4 +1,4 @@
-# RECFLIX
+# Recflix
 
 ## Installation
 ```bash
