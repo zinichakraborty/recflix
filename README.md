@@ -49,5 +49,3 @@ Streamlit:
 ```bash
 streamlit run app/main.py
 ```
-
-Modified README for better instructions
