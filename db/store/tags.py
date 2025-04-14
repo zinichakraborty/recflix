@@ -43,9 +43,10 @@ tag_strings = []
 tag_embeddings = []
 
 for item_id, tags in item_tags.items():
+    tag_str = ", ".join(tags)
     item_ids.append(item_id)
-    tag_strings.append(tags)
-    tag_embeddings.append(ef.encode(tags).tolist())
+    tag_strings.append(tag_str)
+    tag_embeddings.append(ef.encode(tag_str).tolist())
 
 BATCH_SIZE = 500
 num_records = len(item_ids)
