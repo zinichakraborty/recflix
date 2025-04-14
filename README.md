@@ -25,10 +25,13 @@ Streamlit:
 streamlit run app/main.py
 ```
 ## Movie Database
-VectorDB hosted on Milvus
-
-## User Profile Storage
-Redis
-
+To populate the movie vector database:
+1. Download the dataset below and add folder (should not commit due to gitignore)
+2. Run (should take 5-10 minutes each):
+```bash
+db/store/movies.py
+db/store/reviews.py
+db/store/tags.py
+```
 ## Dataset
-Download the dataset: https://grouplens.org/datasets/movielens/tag-genome-2021/
+Dataset download link: https://grouplens.org/datasets/movielens/tag-genome-2021/
