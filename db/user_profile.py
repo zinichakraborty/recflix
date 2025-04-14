@@ -16,12 +16,13 @@ r = redis.Redis(
     password=password,
 )
 
-def save_user_data(name, watched_movies, preferences):
+def save_user_data(name, watched_movies, selected_genres, preferences):
     if not name:
         raise ValueError("User name is required")
 
     user_data = {
         "watched_movies": watched_movies,
+        "selected_genres": selected_genres,
         "preferences": preferences
     }
 
