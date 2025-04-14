@@ -15,7 +15,7 @@ ef = SentenceTransformer("all-MiniLM-L6-v2")
 
 fields = [
     FieldSchema(name="item_id", dtype=DataType.INT64, is_primary=True, auto_id=False),
-    FieldSchema(name="tags", dtype=DataType.VARCHAR, max_length=2048),
+    FieldSchema(name="tags", dtype=DataType.VARCHAR, max_length=4096),
     FieldSchema(name="tags_embedding", dtype=DataType.FLOAT_VECTOR, dim=384),
 ]
 schema = CollectionSchema(fields=fields, description="Tag associations per movie with embeddings")
