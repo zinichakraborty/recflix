@@ -42,8 +42,10 @@ with tab1:
         user_profile.save_user_data(user_name, watched_movies, selected_genres, user_preferences)
         st.subheader("Recommendations based on your preferences:")
         results = recommend.recommend_movies(user_preferences, min_rating)
-        for i, movie in enumerate(results):
-            st.markdown(f"**{i+1}. {movie['title']}** (Rating: {movie['avgRating']})")
+        for i, result in enumerate(results):
+            movie = result['movie'] 
+            st.markdown(f"**{i+1}. {movie['title']}** (Similarity Score: {result['score']*100:.2f})")
+            st.markdown(f"• Rating: {movie['avgRating']:.2f}")
             st.markdown(f"• Directed by: {movie['directedBy']}")
             st.markdown(f"• Starring: {movie['starring']}")
             st.markdown(f"• IMDb ID: {movie['imdbId']}")
