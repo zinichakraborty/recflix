@@ -22,6 +22,8 @@ def render():
             number={"font": {"size": 48}}
         ))
 
+        #TODO: Plot most watched movies and prefered genres
+
         st.plotly_chart(fig, use_container_width=True)
 
         for name, data in user_data.items():

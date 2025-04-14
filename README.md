@@ -30,7 +30,6 @@ To populate the movie vector database:
 2. Run (should take 5-10 minutes each):
 ```bash
 db/store/movies.py
-db/store/reviews.py
 db/store/tags.py
 ```
 ## Dataset

@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from pymilvus import connections, Collection
 from sentence_transformers import SentenceTransformer
 
-def recommend_movies(query):
+def recommend_movies(query, min_rating):
     load_dotenv()
 
     connections.connect(
@@ -13,28 +13,32 @@ def recommend_movies(query):
 
     model = SentenceTransformer("all-MiniLM-L6-v2")
 
-    collection_name = "movies"
-    collection = Collection(name=collection_name)
-    collection.load()
+    tag_collection = Collection(name="tags")
+    tag_collection.load()
 
     query_embedding = model.encode([query]).tolist()
 
     search_params = {"metric_type": "COSINE", "params": {"nprobe": 10}}
-    results = collection.search(
+    results = tag_collection.search(
         data=query_embedding,
-        anns_field="title_embeddings",
+        anns_field="tags_embedding",
         param=search_params,
-        limit=10,
-        output_fields=["title", "directedBy", "starring", "avgRating", "imdbId"]
+        limit=20,
+        output_fields=["item_id"]
     )
 
-    return [
-        {
-            "title": hit.entity.title,
-            "avgRating": hit.entity.avgRating,
-            "directedBy": hit.entity.directedBy,
-            "starring": hit.entity.starring,
-            "imdbId": hit.entity.imdbId,
-        }
-        for hit in results[0]
-    ]
+    item_ids = [hit.entity.item_id for hit in results[0]]
+
+    movies_collection = Collection(name="movies")
+    movies_collection.load()
+
+    expr = f"item_id in [{', '.join(map(str, item_ids))}] and avgRating >= {min_rating}"
+    movie_results = movies_collection.query(
+        expr=expr,
+        output_fields=["item_id", "title", "avgRating", "directedBy", "starring", "imdbId"]
+    )
+
+    id_to_movie = {movie["item_id"]: movie for movie in movie_results}
+    ordered_movies = [id_to_movie[iid] for iid in item_ids if iid in id_to_movie]
+
+    return ordered_movies
