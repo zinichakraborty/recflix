@@ -14,14 +14,24 @@ conda activate recflix-env
 
 ## ENVIRONMENT VARIABLES
 
-1. Create a free Zilliz (Milvus Cloud) and Redis Cloud account/cluster.
-2. Create a .env file and add these keys:
+1. Create a free Zilliz (Milvus Cloud), Supabase, and Redis Cloud account/cluster.
+2. In Supabase create a `users` table that holds id, username (text, unique, not null), and password (text, not null).
+3. Create a .env file and add these keys:
 
 ```bash
+#Redis
 REDIS_HOST=''
 REDIS_PORT=''
 REDIS_PASSWORD=''
 
+#Supabase
+user=''
+password=''
+host=''
+port=''
+dbname=postgres
+
+#Milvus
 ZILLIZ_URI=''
 ZILLIZ_TOKEN=''
 ```
