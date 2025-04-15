@@ -16,42 +16,39 @@ r = redis.Redis(
     password=password,
 )
 
-def save_user_data(name, watched_movies, selected_genres, preferences):
-    if not name:
-        raise ValueError("User name is required")
-
+def save_user_data(username, watched_movies, selected_genres, preferences):
+    key = f"user:{username}"
     user_data = {
         "watched_movies": watched_movies,
         "selected_genres": selected_genres,
         "preferences": preferences
     }
+    r.set(key, json.dumps(user_data))
+    print(f"Saved data for {username}")
 
-    r.set(name, json.dumps(user_data))
-    print(f"Saved data for user: {name}")
-
-def get_user_data(name):
-    data = r.get(name)
+def get_user_data(username):
+    key = f"user:{username}"
+    data = r.get(key)
     if data:
         return json.loads(data)
-    else:
-        print(f"No data found for user: {name}")
-        return None
+    return None
 
 def get_all_user_data():
-    all_keys = r.keys("*")
+    all_keys = r.keys("user:*")
     all_data = {}
 
     for key in all_keys:
+        username = key.split(":")[1]
         data = r.get(key)
         try:
-            all_data[key] = json.loads(data)
+            all_data[username] = json.loads(data)
         except (TypeError, json.JSONDecodeError):
-            all_data[key] = data
+            all_data[username] = data
 
     return all_data
 
 def delete_all_user_data():
-    all_keys = r.keys("*")
+    all_keys = r.keys("user:*")
     if not all_keys:
         print("No keys to delete.")
         return

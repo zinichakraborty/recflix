@@ -5,7 +5,7 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from db.user_profile import get_all_user_data
+from db.actions.user_data import get_all_user_data
 
 def render():
     st.title("User Analytics")

@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from pymilvus import connections, Collection
 from sentence_transformers import SentenceTransformer
 
-def recommend_movies(query, min_rating):
+def recommend_movies(watched, genre, query, min_rating):
     load_dotenv()
 
     connections.connect(
@@ -28,6 +28,7 @@ def recommend_movies(query, min_rating):
     )
 
     item_ids = [hit.entity.item_id for hit in results[0]]
+    scores = [hit.distance for hit in results[0]] 
 
     movies_collection = Collection(name="movies")
     movies_collection.load()
@@ -39,6 +40,6 @@ def recommend_movies(query, min_rating):
     )
 
     id_to_movie = {movie["item_id"]: movie for movie in movie_results}
-    ordered_movies = [id_to_movie[iid] for iid in item_ids if iid in id_to_movie]
+    ordered_movies = [{"movie": id_to_movie[iid], "score": score} for iid, score in zip(item_ids, scores) if iid in id_to_movie]
 
     return ordered_movies

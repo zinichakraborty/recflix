@@ -13,3 +13,5 @@ dependencies:
       - streamlit
       - redis
       - plotly
+      - supabase
+      - psycopg2-binary
