@@ -4,7 +4,6 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-
 from db.auth import store_user, validate_user
 
 def render_login():
@@ -17,9 +16,11 @@ def render_login():
         password = st.text_input("Password", type="password")
 
         if st.button("Log In"):
-            if validate_user(username, password):
+            user_info = validate_user(username, password)
+            if user_info:
                 st.session_state.logged_in = True
                 st.session_state.username = username
+                st.session_state.is_admin = user_info.get("admin", False)
                 st.session_state.page = "recflix"
                 st.rerun()
             else:
@@ -33,7 +34,8 @@ def render_login():
             success = store_user(new_user, new_pass)
             if success:
                 st.session_state.logged_in = True
-                st.session_state.username = username
+                st.session_state.username = new_user
+                st.session_state.is_admin = False
                 st.session_state.page = "recflix"
                 st.rerun()
             else:

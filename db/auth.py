@@ -30,7 +30,7 @@ try:
 except Exception as e:
     print("DB connection error:", e)
 
-def store_user(username: str, password: str) -> bool:
+def store_user(username: str, password: str, is_admin=False) -> bool:
     try:
         conn = get_connection()
         cur = conn.cursor()
@@ -40,8 +40,8 @@ def store_user(username: str, password: str) -> bool:
             return False
 
         cur.execute(
-            "INSERT INTO users (username, password) VALUES (%s, %s);",
-            (username, password)
+            "INSERT INTO users (username, password, admin) VALUES (%s, %s, %s);",
+            (username, password, is_admin)
         )
         conn.commit()
         return True
@@ -52,7 +52,7 @@ def store_user(username: str, password: str) -> bool:
         cur.close()
         conn.close()
 
-def validate_user(username: str, password: str) -> bool:
+def validate_user(username: str, password: str) -> dict | None:
     try:
         conn = get_connection()
         cur = conn.cursor(cursor_factory=RealDictCursor)
@@ -62,10 +62,10 @@ def validate_user(username: str, password: str) -> bool:
             (username, password)
         )
         result = cur.fetchone()
-        return result is not None
+        return result
     except Exception as e:
         print("Error validating user:", e)
-        return False
+        return None
     finally:
         cur.close()
         conn.close()

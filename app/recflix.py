@@ -7,6 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import db.actions.user_data as user_data
 import db.actions.recommend as recommend
 import app.user_profile as user_profile
+import app.user_analytics as user_analytics
 
 #TODO: Display user's watched movies
 #TODO: Make an API call with a search bar to get a list of movies
@@ -27,9 +28,12 @@ def render_app():
         st.session_state.page = "login"
         st.rerun()
 
-    tab1, tab2 = st.tabs(["Recommendations", "Profile"])
+    if st.session_state.get("is_admin", False):
+        tabs = st.tabs(["Recommendations", "Profile", "User Analytics"])
+    else:
+        tabs = st.tabs(["Recommendations", "Profile"])
 
-    with tab1:
+    with tabs[0]:
         watched = st.multiselect("Movies you’ve watched:", [
             "Inception", "The Matrix", "Parasite", "Spirited Away"
         ])
@@ -57,5 +61,9 @@ def render_app():
                 st.markdown(f"• IMDb ID: {movie['imdbId']}")
                 st.markdown("---")
 
-    with tab2:
+    with tabs[1]:
         user_profile.render()
+    
+    if st.session_state.get("is_admin", False):
+        with tabs[2]:
+            user_analytics.render()
