@@ -69,3 +69,44 @@ def validate_user(username: str, password: str) -> dict | None:
     finally:
         cur.close()
         conn.close()
+
+def add_watch_history(username: str, history: str) -> bool:
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+
+        history_str = ",".join(history)
+
+        cur.execute(
+            "UPDATE users SET watch_history = %s WHERE username = %s;",
+            (history_str, username)
+        )
+        conn.commit()
+        return True
+    except Exception as e:
+        print("Error updating watch history:", e)
+        return False
+    finally:
+        cur.close()
+        conn.close()
+
+
+def get_watch_history(username: str) -> list:
+    try:
+        conn = get_connection()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+
+        cur.execute(
+            "SELECT watch_history FROM users WHERE username = %s;",
+            (username,)
+        )
+        result = cur.fetchone()
+        if result and result["watch_history"]:
+            return [x.strip() for x in result["watch_history"].split(",")]
+        return []
+    except Exception as e:
+        print("Error retrieving watch history:", e)
+        return []
+    finally:
+        cur.close()
+        conn.close()

@@ -4,7 +4,7 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from db.auth import store_user, validate_user
+from db.store.users import store_user, validate_user
 
 def render_login():
     st.title("Recflix")

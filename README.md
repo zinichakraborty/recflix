@@ -15,7 +15,7 @@ conda activate recflix-env
 ## ENVIRONMENT VARIABLES
 
 1. Create a free Zilliz (Milvus Cloud), Supabase, and Redis Cloud account/cluster.
-2. In Supabase create a `users` table that holds id, username (text, unique, not null), and password (text, not null).
+2. In Supabase create a `users` table that holds id, username (text, unique, not null), password (text, not null), watch_history (text, nullable, array).
 3. Create a .env file and add these keys:
 
 ```bash
