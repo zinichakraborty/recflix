@@ -6,7 +6,7 @@ import requests
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import db.store.users as users
 import db.actions.user_stats as user_stats
-import app.recflix as recflix
+import db.actions.imdb_search as imdb_search
 
 def render():
     st.title(f"{st.session_state.username}'s Profile")
@@ -18,7 +18,7 @@ def render():
     if watch_history:
         st.markdown("### Movies You've Watched:")
         for movie in watch_history:
-            st.markdown(f"- {movie}")
+            st.markdown(f"{movie}")
     else:
         st.info("No watch history yet.")
 
@@ -28,7 +28,7 @@ def render():
 
     search_query = st.text_input("Search for a movie to add:")
     if search_query:
-        st.session_state.profile_search_results = recflix.search_movies(search_query)
+        st.session_state.profile_search_results = imdb_search.search_movies(search_query)
 
     if st.session_state.profile_search_results:
         selected_movie = st.selectbox("Suggestions:", st.session_state.profile_search_results)

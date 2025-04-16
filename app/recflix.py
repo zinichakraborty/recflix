@@ -1,7 +1,6 @@
 import streamlit as st
 import sys
 import os
-import requests
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -10,6 +9,7 @@ import db.actions.recommend as recommend
 import app.user_profile as user_profile
 import app.user_analytics as user_analytics
 import db.store.users as users
+import db.actions.imdb_search as imdb_search
 
 def render_app():
     if "username" not in st.session_state:
@@ -41,7 +41,7 @@ def render_app():
         query_input = st.text_input("Search for a movie:")
 
         if query_input:
-            st.session_state.search_results = search_movies(query_input)
+            st.session_state.search_results = imdb_search.search_movies(query_input)
 
         if st.session_state.search_results:
             selected_movie = st.selectbox(
@@ -62,12 +62,12 @@ def render_app():
             default=st.session_state.watched_movies,
             key="watched_movies_select"
         )
-
-        include_watch_history = st.radio(
-            "Include your watch history in the recommendation?",
-            ["Yes", "No"],
-            horizontal=True
-        ) == "Yes"
+        if watched:
+            include_watch_history = st.radio(
+                "Include your watch history in the recommendation?",
+                ["Yes", "No"],
+                horizontal=True
+            ) == "Yes"
 
         genres = st.multiselect(
             "What genre are you looking for right now:",
@@ -100,19 +100,3 @@ def render_app():
     if st.session_state.get("is_admin", False):
         with tabs[2]:
             user_analytics.render()
-
-def search_movies(query):
-    api_key = os.getenv("TMDB_API_KEY")
-    url = f"https://api.themoviedb.org/3/search/movie"
-    params = {
-        "api_key": api_key,
-        "query": query,
-        "include_adult": False,
-        "language": "en-US",
-        "page": 1
-    }
-    response = requests.get(url, params=params)
-    if response.status_code == 200:
-        data = response.json()
-        return [movie["title"] for movie in data.get("results", [])]
-    return []
