@@ -1,4 +1,5 @@
 # Recflix
+Movie Recommendation Engine created for CS4440 incorporating three separate databases.
 
 ## Installation
 
@@ -15,7 +16,7 @@ conda activate recflix-env
 ## ENVIRONMENT VARIABLES
 
 1. Create a free Zilliz (Milvus Cloud) account/cluster, Supabase account/cluster, Redis Cloud account/cluster, and TMDB account.
-2. In Supabase create a `users` table that holds id, username (text, unique, not null), password (text, not null), watch_history (text, nullable, array).
+2. In Supabase create a `users` table that holds id, username (text, unique, not null), password (text, not null), watch_history (text, nullable).
 3. Create a .env file and add these keys:
 
 ```bash
