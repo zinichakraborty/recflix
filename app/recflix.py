@@ -1,6 +1,7 @@
 import streamlit as st
 import sys
 import os
+import requests
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -31,14 +32,18 @@ def render_app():
         tabs = st.tabs(["Recommendations", "Profile"])
 
     with tabs[0]:
-        movie_options = [
-            "Inception", "The Matrix", "Parasite", "Spirited Away"
-        ]
+        st.subheader("Select movies you’ve watched:")
+
+        query_input = st.text_input("Search for a movie:")
+        search_results = search_movies(query_input) if query_input else []
+
+        all_options = list(dict.fromkeys((watch_history or []) + search_results))
 
         watched = st.multiselect(
-            "Movies you’ve watched:",
-            options=movie_options,
-            default=[m for m in movie_options if m in (watch_history or [])]
+            "Movies:",
+            options=all_options,
+            default=watch_history or [],
+            key="watched_movies"
         )
 
         include_watch_history = st.radio(
@@ -47,7 +52,15 @@ def render_app():
             horizontal=True
         ) == "Yes"
 
-        genres = st.multiselect("What genre are you looking for right now:", ["Drama", "Sci-Fi", "Comedy", "Action"])
+        genres = st.multiselect(
+            "What genre are you looking for right now:",
+            [
+                "Action", "Adventure", "Animation", "Biography", "Comedy", "Crime", "Documentary",
+                "Drama", "Family", "Fantasy", "Film-Noir", "History", "Horror", "Music", "Musical",
+                "Mystery", "Romance", "Sci-Fi", "Short", "Sport", "Superhero", "Thriller", "War", "Western"
+            ]
+        )
+
         prefs = st.text_area("What general preferences do you have for the movie?")
         min_rating = st.slider("Minimum Movie Rating (out of 5)", 0.0, 5.0, 3.5, step=0.1)
         if st.button("Recommend"):
@@ -70,3 +83,19 @@ def render_app():
     if st.session_state.get("is_admin", False):
         with tabs[2]:
             user_analytics.render()
+
+def search_movies(query):
+    api_key = os.getenv("TMDB_API_KEY")
+    url = f"https://api.themoviedb.org/3/search/movie"
+    params = {
+        "api_key": api_key,
+        "query": query,
+        "include_adult": False,
+        "language": "en-US",
+        "page": 1
+    }
+    response = requests.get(url, params=params)
+    if response.status_code == 200:
+        data = response.json()
+        return [movie["title"] for movie in data.get("results", [])]
+    return []

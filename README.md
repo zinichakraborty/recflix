@@ -14,11 +14,15 @@ conda activate recflix-env
 
 ## ENVIRONMENT VARIABLES
 
-1. Create a free Zilliz (Milvus Cloud), Supabase, and Redis Cloud account/cluster.
+1. Create a free Zilliz (Milvus Cloud) account/cluster, Supabase account/cluster, Redis Cloud account/cluster, and TMDB account.
 2. In Supabase create a `users` table that holds id, username (text, unique, not null), password (text, not null), watch_history (text, nullable, array).
 3. Create a .env file and add these keys:
 
 ```bash
+#Milvus
+ZILLIZ_URI=''
+ZILLIZ_TOKEN=''
+
 #Redis
 REDIS_HOST=''
 REDIS_PORT=''
@@ -31,9 +35,8 @@ host=''
 port=''
 dbname=postgres
 
-#Milvus
-ZILLIZ_URI=''
-ZILLIZ_TOKEN=''
+#IMDB API
+TMDB_API_KEY=''
 ```
 
 ## Movie Database
