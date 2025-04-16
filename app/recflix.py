@@ -34,16 +34,35 @@ def render_app():
     with tabs[0]:
         st.subheader("Select movies you’ve watched:")
 
-        query_input = st.text_input("Search for a movie:")
-        search_results = search_movies(query_input) if query_input else []
+        if "watched_movies" not in st.session_state:
+            st.session_state.watched_movies = watch_history or []
 
-        all_options = list(dict.fromkeys((watch_history or []) + search_results))
+        if "search_results" not in st.session_state:
+            st.session_state.search_results = []
+
+        query_input = st.text_input("Search for a movie:")
+
+        if query_input:
+            st.session_state.search_results = search_movies(query_input)
+
+        if st.session_state.search_results:
+            selected_movie = st.selectbox(
+                "Suggestions:",
+                options=st.session_state.search_results,
+                key="suggest_box"
+            )
+
+            if st.button("Add to Watched"):
+                if selected_movie and selected_movie not in st.session_state.watched_movies:
+                    st.session_state.watched_movies.append(selected_movie)
+                st.session_state.search_results = []
+                st.rerun()
 
         watched = st.multiselect(
-            "Movies:",
-            options=all_options,
-            default=watch_history or [],
-            key="watched_movies"
+            "Your watched movies:",
+            options=st.session_state.watched_movies,
+            default=st.session_state.watched_movies,
+            key="watched_movies_select"
         )
 
         include_watch_history = st.radio(
