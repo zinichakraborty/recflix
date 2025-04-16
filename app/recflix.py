@@ -11,7 +11,6 @@ import app.user_analytics as user_analytics
 import db.store.users as users
 
 #TODO: Make an API call with a search bar to get a list of movies
-#TODO: Display the user's watched movies
 
 def render_app():
     if "username" not in st.session_state:
@@ -19,6 +18,7 @@ def render_app():
         return
 
     st.title(f"Hi {st.session_state.username}!")
+    watch_history = users.get_watch_history(st.session_state.username)
 
     if st.button("Log out"):
         st.session_state.logged_in = False
@@ -31,9 +31,16 @@ def render_app():
         tabs = st.tabs(["Recommendations", "Profile"])
 
     with tabs[0]:
-        watched = st.multiselect("Movies you’ve watched:", [
+        movie_options = [
             "Inception", "The Matrix", "Parasite", "Spirited Away"
-        ])
+        ]
+
+        watched = st.multiselect(
+            "Movies you’ve watched:",
+            options=movie_options,
+            default=[m for m in movie_options if m in (watch_history or [])]
+        )
+
         include_watch_history = st.radio(
             "Include your watch history in the recommendation?",
             ["Yes", "No"],
