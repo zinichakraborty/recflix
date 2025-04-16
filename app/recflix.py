@@ -53,6 +53,7 @@ def render_app():
             if st.button("Add to Watched"):
                 if selected_movie and selected_movie not in st.session_state.watched_movies:
                     st.session_state.watched_movies.append(selected_movie)
+                    user_stats.save_user_data(st.session_state.username, st.session_state.watched_movies)
                 st.session_state.search_results = []
                 st.rerun()
 
@@ -68,6 +69,8 @@ def render_app():
                 ["Yes", "No"],
                 horizontal=True
             ) == "Yes"
+        else:
+            include_watch_history = False
 
         genres = st.multiselect(
             "What genre are you looking for right now:",
