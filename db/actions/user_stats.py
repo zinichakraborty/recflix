@@ -16,13 +16,12 @@ r = redis.Redis(
     password=password,
 )
 
-def save_user_data(username, watched_movies, selected_genres, preferences):
+def save_user_data(username, watched_movies):
     key = f"user:{username}"
     user_data = {
         "watched_movies": watched_movies
     }
     r.set(key, json.dumps(user_data))
-    print(f"Saved data for {username}")
 
 def get_user_data(username):
     key = f"user:{username}"

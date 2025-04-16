@@ -1,7 +1,12 @@
 import os
+import sys
 from dotenv import load_dotenv
 import psycopg2
 from psycopg2.extras import RealDictCursor
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+import db.actions.user_stats as user_stats
 
 load_dotenv()
 
@@ -92,6 +97,9 @@ def add_watch_history(username: str, history: str) -> bool:
 
 
 def get_watch_history(username: str) -> list:
+    redis_data = user_stats.get_user_data(username)
+    if redis_data and "watched_movies" in redis_data:
+        return redis_data["watched_movies"]
     try:
         conn = get_connection()
         cur = conn.cursor(cursor_factory=RealDictCursor)
