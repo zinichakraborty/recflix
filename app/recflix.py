@@ -12,7 +12,6 @@ import db.store.users as users
 
 #TODO: Make an API call with a search bar to get a list of movies
 #TODO: Display the user's watched movies
-#TODO: Get the tags of top watched movies and add them to the query
 
 def render_app():
     if "username" not in st.session_state:
@@ -35,6 +34,12 @@ def render_app():
         watched = st.multiselect("Movies you’ve watched:", [
             "Inception", "The Matrix", "Parasite", "Spirited Away"
         ])
+        include_watch_history = st.radio(
+            "Include your watch history in the recommendation?",
+            ["Yes", "No"],
+            horizontal=True
+        ) == "Yes"
+
         genres = st.multiselect("What genre are you looking for right now:", ["Drama", "Sci-Fi", "Comedy", "Action"])
         prefs = st.text_area("What general preferences do you have for the movie?")
         min_rating = st.slider("Minimum Movie Rating (out of 5)", 0.0, 5.0, 3.5, step=0.1)
@@ -42,7 +47,7 @@ def render_app():
             st.subheader("Recommendations based on your history and current preferences:")
             user_stats.save_user_data(st.session_state.username, watched, genres, prefs)
             users.add_watch_history(st.session_state.username, watched)
-            results = recommend.recommend_movies(watched, genres, prefs, min_rating)
+            results = recommend.recommend_movies(watched, genres, prefs, min_rating, include_watch_history)
             for i, result in enumerate(results):
                 movie = result['movie'] 
                 st.markdown(f"**{i+1}. {movie['title']}** (Similarity Score: {result['score']*100:.2f})")
