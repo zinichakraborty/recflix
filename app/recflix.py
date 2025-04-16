@@ -11,8 +11,6 @@ import app.user_profile as user_profile
 import app.user_analytics as user_analytics
 import db.store.users as users
 
-#TODO: Make an API call with a search bar to get a list of movies
-
 def render_app():
     if "username" not in st.session_state:
         st.warning("You must log in.")
