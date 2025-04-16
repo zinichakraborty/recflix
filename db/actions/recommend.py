@@ -40,7 +40,6 @@ def recommend_movies(watched, genre, query, min_rating, include_watch_history):
             }
         )
 
-
     search_params = {"metric_type": "COSINE", "params": {"nprobe": 10}}
     results = tag_collection.search(
         data=query_embedding,
@@ -63,7 +62,8 @@ def recommend_movies(watched, genre, query, min_rating, include_watch_history):
     )
 
     id_to_movie = {movie["item_id"]: movie for movie in movie_results}
-    ordered_movies = [{"movie": id_to_movie[iid], "score": score} for iid, score in zip(item_ids, scores) if iid in id_to_movie]
+    ordered_movies = [{"movie": id_to_movie[iid], "score": score} 
+                      for iid, score in zip(item_ids, scores) if iid in id_to_movie]
 
     return ordered_movies
 
@@ -102,11 +102,16 @@ def get_tag_embeddings_for_movies(movie_titles: list[str]):
 
     return [entry["tags_embedding"] for entry in tag_entries]
 
-import numpy as np
-
 def weighted_mean_embedding(query, genre, watched_embeddings, model, weights):
     query_vec = np.array(model.encode(query)).flatten()
-    genre_vec = np.array(model.encode(genre)).flatten()
+
+    if isinstance(genre, list):
+        if genre:
+            genre_vec = np.mean(np.array(model.encode(genre)), axis=0)
+        else:
+            genre_vec = np.zeros_like(query_vec)
+    else:
+        genre_vec = np.array(model.encode(genre)).flatten()
 
     all_vecs = []
     all_weights = []
@@ -124,7 +129,6 @@ def weighted_mean_embedding(query, genre, watched_embeddings, model, weights):
         all_vecs.append(vec)
         all_weights.append(weights["watched"] / len(watched_embeddings))
 
-
     all_vecs = np.stack(all_vecs)
     all_weights = np.array(all_weights).reshape(-1, 1)
 
@@ -133,10 +137,17 @@ def weighted_mean_embedding(query, genre, watched_embeddings, model, weights):
 
 def weighted_mean_embedding_basic(query, genre, model, weights):
     query_vec = np.array(model.encode(query))
-    genre_vec = np.array(model.encode(genre))
-
+    if isinstance(genre, list):
+        if genre:
+            genre_vecs = np.array(model.encode(genre))
+            genre_vec = np.mean(genre_vecs, axis=0)
+        else:
+            genre_vec = np.zeros_like(query_vec)
+    else:
+        genre_vec = np.array(model.encode(genre))
+    
     all_vecs = np.stack([query_vec, genre_vec])
     all_weights = np.array([weights["query"], weights["genre"]]).reshape(-1, 1)
-
+    
     weighted_avg = np.sum(all_vecs * all_weights, axis=0) / np.sum(all_weights)
     return [weighted_avg.tolist()]

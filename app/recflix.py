@@ -63,6 +63,7 @@ def render_app():
             default=st.session_state.watched_movies,
             key="watched_movies_select"
         )
+        print(watched)
         if watched:
             include_watch_history = st.radio(
                 "Include your watch history in the recommendation?",
@@ -84,6 +85,13 @@ def render_app():
         prefs = st.text_area("What general preferences do you have for the movie?")
         min_rating = st.slider("Minimum Movie Rating (out of 5)", 0.0, 5.0, 3.5, step=0.1)
         if st.button("Recommend"):
+            if not genres:
+                st.error("Please select at least one genre before getting recommendations.")
+                st.stop()
+
+            if not prefs.strip():
+                st.error("Please enter your general movie preferences.")
+                st.stop()
             st.subheader("Recommendations based on your history and current preferences:")
             user_stats.save_user_data(st.session_state.username, watched)
             users.add_watch_history(st.session_state.username, watched)
