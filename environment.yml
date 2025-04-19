@@ -15,3 +15,4 @@ dependencies:
       - plotly
       - supabase
       - psycopg2-binary
+      - streamlit-option-menu
