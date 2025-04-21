@@ -1,6 +1,9 @@
 # Recflix
 Movie Recommendation Engine created for CS4440 incorporating three separate databases.
 
+[Group5PresentationCS4440.pdf](https://github.com/user-attachments/files/19839665/Group5PresentationCS4440.pdf)
+
+
 ## Installation
 
 ```bash
