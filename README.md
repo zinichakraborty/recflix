@@ -1,6 +1,8 @@
 # Recflix
 Movie Recommendation Engine created for CS4440 incorporating three separate databases.
 
+<img width="857" alt="Project Architecture" src="https://github.com/user-attachments/assets/c97ab1d9-c3f2-4154-95d9-758b01854f96" />
+
 [Group5PresentationCS4440.pdf](https://github.com/user-attachments/files/19839665/Group5PresentationCS4440.pdf)
 
 
