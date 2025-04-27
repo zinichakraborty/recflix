@@ -10,11 +10,11 @@ import db.actions.user_stats as user_stats
 
 load_dotenv()
 
-USER = os.getenv("user")
-PASSWORD = os.getenv("password")
-HOST = os.getenv("host")
-PORT = os.getenv("port")
-DBNAME = os.getenv("dbname")
+USER = os.getenv("SUPABASE_USER")
+PASSWORD = os.getenv("SUPABASE_PASSWORD")
+HOST = os.getenv("SUPABASE_HOST")
+PORT = os.getenv("SUPABASE_PORT")
+DBNAME = os.getenv("SUPABASE_DBNAME")
 
 def get_connection():
     return psycopg2.connect(
@@ -44,10 +44,7 @@ def store_user(username: str, password: str, is_admin=False) -> bool:
         if cur.fetchone():
             return False
 
-        cur.execute(
-            "INSERT INTO users (username, password, admin) VALUES (%s, %s, %s);",
-            (username, password, is_admin)
-        )
+        cur.execute("INSERT INTO users (username, password, admin) VALUES (%s, %s, %s);", (username, password, is_admin))
         conn.commit()
         return True
     except Exception as e:
@@ -62,10 +59,7 @@ def validate_user(username: str, password: str) -> dict | None:
         conn = get_connection()
         cur = conn.cursor(cursor_factory=RealDictCursor)
 
-        cur.execute(
-            "SELECT * FROM users WHERE username = %s AND password = %s;",
-            (username, password)
-        )
+        cur.execute("SELECT * FROM users WHERE username = %s AND password = %s;", (username, password))
         result = cur.fetchone()
         return result
     except Exception as e:
@@ -80,12 +74,7 @@ def add_watch_history(username: str, history: str) -> bool:
         conn = get_connection()
         cur = conn.cursor()
 
-        history_str = ",".join(history)
-
-        cur.execute(
-            "UPDATE users SET watch_history = %s WHERE username = %s;",
-            (history_str, username)
-        )
+        cur.execute("UPDATE users SET watch_history = %s WHERE username = %s;", (history, username))
         conn.commit()
         return True
     except Exception as e:
@@ -104,14 +93,9 @@ def get_watch_history(username: str) -> list:
         conn = get_connection()
         cur = conn.cursor(cursor_factory=RealDictCursor)
 
-        cur.execute(
-            "SELECT watch_history FROM users WHERE username = %s;",
-            (username,)
-        )
+        cur.execute("SELECT watch_history FROM users WHERE username = %s;",(username))
         result = cur.fetchone()
-        if result and result["watch_history"]:
-            return [x.strip() for x in result["watch_history"].split(",")]
-        return []
+        return result["watch_history"] or []
     except Exception as e:
         print("Error retrieving watch history:", e)
         return []

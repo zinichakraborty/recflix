@@ -16,22 +16,22 @@ def render():
     st.session_state.watched_movies = watch_history
 
     if watch_history:
-        st.markdown("### Movies You've Watched:")
+        st.markdown("# Movies You've Watched:")
         for movie in watch_history:
-            st.markdown(f"{movie}")
+            st.markdown(f"## {movie}")
     else:
         st.info("No watch history yet.")
 
-    st.markdown("### Add Movies to Watch History")
-    if "profile_search_results" not in st.session_state:
-        st.session_state.profile_search_results = []
+    st.markdown("# Add Movies to Watch History")
+    if "search_results" not in st.session_state:
+        st.session_state.search_results = []
 
     search_query = st.text_input("Search for a movie to add:")
     if search_query:
-        st.session_state.profile_search_results = imdb_search.search_movies(search_query)
+        st.session_state.search_results = imdb_search.search_movies(search_query)
 
-    if st.session_state.profile_search_results:
-        selected_movie = st.selectbox("Suggestions:", st.session_state.profile_search_results)
+    if st.session_state.search_results:
+        selected_movie = st.selectbox("Suggestions:", st.session_state.search_results)
         if st.button("Add Movie to Watch History"):
             if selected_movie not in watch_history:
                 updated_history = watch_history + [selected_movie]
@@ -41,12 +41,12 @@ def render():
                 st.session_state.profile_search_results = []
                 st.rerun()
 
-    selected_to_remove = st.multiselect(
+    selected_remove = st.multiselect(
         "Select movies to remove from watch history:",
         options=watch_history
     )
     if st.button("Remove Selected"):
-        updated_history = [m for m in watch_history if m not in selected_to_remove]
+        updated_history = [m for m in watch_history if m not in selected_remove]
         user_stats.save_user_data(st.session_state.username, updated_history)
         users.add_watch_history(st.session_state.username, updated_history)
         st.rerun()

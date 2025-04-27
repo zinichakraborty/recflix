@@ -20,8 +20,8 @@ conda activate recflix-env
 
 ## ENVIRONMENT VARIABLES
 
-1. Create a free Zilliz (Milvus Cloud) account/cluster, Supabase account/cluster, Redis Cloud account/cluster, and TMDB account.
-2. In Supabase create a `users` table that holds id, username (text, unique, not null), password (text, not null), watch_history (text, nullable).
+1. Create a free [Zilliz](https://cloud.zilliz.com/) (Milvus Cloud) account/cluster, [Supabase](https://supabase.com/dashboard) account/cluster, [Redis Cloud](https://app.redislabs.com/) account/cluster, and [TMDB](https://www.themoviedb.org/login?language=en-US) account.
+2. In Supabase create a `users` table that holds id, username (text, unique, not null), password (text, not null), watch_history (text, is_array, nullable).
 3. Create a .env file and add these keys:
 
 ```bash
@@ -35,11 +35,11 @@ REDIS_PORT=''
 REDIS_PASSWORD=''
 
 #Supabase
-user=''
-password=''
-host=''
-port=''
-dbname=postgres
+SUPABASE_USER=''
+SUPABASE_PASSWORD=''
+SUPABASE_HOST=''
+SUPABASE_PORT=''
+SUPABASE_DBNAME=postgres
 
 #IMDB API
 TMDB_API_KEY=''
@@ -68,3 +68,6 @@ Streamlit:
 ```bash
 streamlit run app/main.py
 ```
+
+Inspired Reference:
+https://www.patrickdinneen.com/posts/movie-explorer-howto/

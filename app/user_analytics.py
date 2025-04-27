@@ -37,4 +37,4 @@ def render():
         ))
         st.plotly_chart(fig, use_container_width=True)
     else:
-        st.info("No user data found in Redis.")
+        st.info("No user data found in Redis yet.")

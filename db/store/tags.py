@@ -11,13 +11,14 @@ token = os.getenv("ZILLIZ_TOKEN")
 
 connections.connect(uri=uri, token=token)
 
-ef = SentenceTransformer("all-MiniLM-L6-v2")
+embedding = SentenceTransformer("all-MiniLM-L6-v2")
 
 fields = [
     FieldSchema(name="item_id", dtype=DataType.INT64, is_primary=True, auto_id=False),
     FieldSchema(name="tags", dtype=DataType.VARCHAR, max_length=4096),
     FieldSchema(name="tags_embedding", dtype=DataType.FLOAT_VECTOR, dim=384),
 ]
+
 schema = CollectionSchema(fields=fields, description="Tag associations per movie with embeddings")
 collection_name = "tags"
 
@@ -46,7 +47,7 @@ for item_id, tags in item_tags.items():
     tag_str = ", ".join(tags)
     item_ids.append(item_id)
     tag_strings.append(tag_str)
-    tag_embeddings.append(ef.encode(tag_str).tolist())
+    tag_embeddings.append(embedding.encode(tag_str).tolist())
 
 BATCH_SIZE = 500
 num_records = len(item_ids)
