@@ -25,29 +25,30 @@ collection_name = "tags"
 collection = Collection(name=collection_name, schema=schema)
 
 with open("movie_dataset_public_final/raw/tags.json", "r") as f:
-    tag_lookup = {}
+    tag_id_map = {}
     for line in f:
-        obj = json.loads(line.strip())
-        tag_lookup[obj["id"]] = obj["tag"]
+        tag_item = json.loads(line.strip())
+        tag_id_map[tag_item["id"]] = tag_item["tag"]
 
-item_tags = defaultdict(list)
+movie_tag_map = defaultdict(list)
 with open("movie_dataset_public_final/raw/tag_count.json", "r") as f:
     for line in f:
-        obj = json.loads(line.strip())
-        tag_id = obj["tag_id"]
-        tag = tag_lookup.get(tag_id)
+        movie_tag = json.loads(line.strip())
+        tag_id = movie_tag["tag_id"]
+        tag = tag_id_map.get(tag_id)
         if tag:
-            item_tags[obj["item_id"]].append(tag)
+            movie_tag_map[movie_tag["item_id"]].append(tag)
 
 item_ids = []
 tag_strings = []
 tag_embeddings = []
 
-for item_id, tags in item_tags.items():
-    tag_str = ", ".join(tags)
+for item_id, tags in movie_tag_map.items():
+    tags_str = ", ".join(tags)
     item_ids.append(item_id)
-    tag_strings.append(tag_str)
-    tag_embeddings.append(embedding.encode(tag_str).tolist())
+    tag_strings.append(tags_str)
+    tag_embeddding = embedding.encode(tags_str).tolist()
+    tag_embeddings.append(tag_embeddding)
 
 BATCH_SIZE = 500
 num_records = len(item_ids)
