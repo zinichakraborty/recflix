@@ -48,4 +48,5 @@ def render():
         updated_history = [m for m in watch_history if m not in selected_remove]
         user_stats.save_user_data(st.session_state.username, updated_history)
         users.add_watch_history(st.session_state.username, updated_history)
+        st.success(f"Removed {selected_remove} to watch history.")
         st.rerun()

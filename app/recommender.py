@@ -65,6 +65,7 @@ def render():
     if st.button("Recommend"):
         user_stats.save_user_data(st.session_state.username, watched)
         users.add_watch_history(st.session_state.username, watched)
+        st.success(f"Getting your recommendations...")
         results = recommend.recommend_movies(watched, genres, prefs, min_rating, include_watch_history)
         for i, result in enumerate(results):
             movie = result['movie']

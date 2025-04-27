@@ -124,8 +124,6 @@ def weighted_mean_embedding(query, genre, watched_embeddings, model, weights):
 
     for vec in watched_embeddings:
         vec = np.array(vec).flatten()
-        if vec.shape != query_vec.shape:
-            raise ValueError(f"Inconsistent shape: watched vec {vec.shape} vs query {query_vec.shape}")
         all_vecs.append(vec)
         all_weights.append(weights["watched"] / len(watched_embeddings))
 
