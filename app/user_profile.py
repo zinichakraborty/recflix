@@ -11,18 +11,17 @@ import db.actions.imdb_search as imdb_search
 def render():
     st.title(f"{st.session_state.username}'s Profile")
 
-    st.subheader("Watch History")
     watch_history = users.get_watch_history(st.session_state.username) or []
     st.session_state.watched_movies = watch_history
 
     if watch_history:
-        st.markdown("# Movies You've Watched:")
+        st.markdown("### Movies You've Watched:")
         for movie in watch_history:
-            st.markdown(f"## {movie}")
+            st.markdown(f"{movie}")
     else:
         st.info("No watch history yet.")
 
-    st.markdown("# Add Movies to Watch History")
+    st.markdown("### Add Movies to Watch History")
     if "search_results" not in st.session_state:
         st.session_state.search_results = []
 
