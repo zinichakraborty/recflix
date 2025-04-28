@@ -44,10 +44,11 @@ def store_user(username: str, password: str, is_admin=False) -> bool:
         if cur.fetchone():
             return False
 
-        cur.execute("INSERT INTO users (username, password, admin, watch_history) VALUES (%s, %s, %s, []);", (username, password, is_admin))
+        cur.execute("INSERT INTO users (username, password, admin, watch_history) VALUES (%s, %s, %s, %s);", (username, password, is_admin, []))
         conn.commit()
         return True
     except Exception as e:
+        print("Error storing user:", e)
         return False
     finally:
         cur.close()

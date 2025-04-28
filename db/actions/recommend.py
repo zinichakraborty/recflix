@@ -62,8 +62,7 @@ def recommend_movies(watched, genre, query, min_rating, include_watch_history):
     )
 
     id_to_movie = {movie["item_id"]: movie for movie in movie_results}
-    ordered_movies = [{"movie": id_to_movie[iid], "score": score} 
-                      for iid, score in zip(item_ids, scores) if iid in id_to_movie]
+    ordered_movies = [{"movie": id_to_movie[iid], "score": score} for iid, score in zip(item_ids, scores) if iid in id_to_movie]
 
     return ordered_movies
 
@@ -82,14 +81,13 @@ def get_tag_embeddings_for_movies(movie_titles: list[str]):
     expr = f'title in [{", ".join(formatted_titles)}]'
     movie_entries = movies_collection.query(
         expr=expr,
-        output_fields=["item_id", "title"]
+        output_fields=["item_id"]
     )
 
     if not movie_entries:
         return []
 
     item_ids = [entry["item_id"] for entry in movie_entries]
-    title_map = {entry["item_id"]: entry["title"] for entry in movie_entries}
 
     tags_collection = Collection(name="tags")
     tags_collection.load()
@@ -97,55 +95,55 @@ def get_tag_embeddings_for_movies(movie_titles: list[str]):
     expr = f"item_id in [{', '.join(map(str, item_ids))}]"
     tag_entries = tags_collection.query(
         expr=expr,
-        output_fields=["item_id", "tags_embedding"]
+        output_fields=["tags_embedding"]
     )
 
     return [entry["tags_embedding"] for entry in tag_entries]
 
 def weighted_mean_embedding(query, genre, watched_embeddings, model, weights):
-    query_vec = np.array(model.encode(query)).flatten()
+    query_vector = np.array(model.encode(query)).flatten()
 
     if isinstance(genre, list):
         if genre:
-            genre_vec = np.mean(np.array(model.encode(genre)), axis=0)
+            genre_vector = np.mean(np.array(model.encode(genre)), axis=0)
         else:
-            genre_vec = np.zeros_like(query_vec)
+            genre_vector = np.zeros_like(query_vector)
     else:
-        genre_vec = np.array(model.encode(genre)).flatten()
+        genre_vector = np.array(model.encode(genre)).flatten()
 
-    all_vecs = []
-    all_weights = []
+    combinged_vectors = []
+    combined_weights = []
 
-    all_vecs.append(query_vec)
-    all_weights.append(weights["query"])
+    combinged_vectors.append(query_vector)
+    combined_weights.append(weights["query"])
 
-    all_vecs.append(genre_vec)
-    all_weights.append(weights["genre"])
+    combinged_vectors.append(genre_vector)
+    combined_weights.append(weights["genre"])
 
-    for vec in watched_embeddings:
-        vec = np.array(vec).flatten()
-        all_vecs.append(vec)
-        all_weights.append(weights["watched"] / len(watched_embeddings))
+    for vector in watched_embeddings:
+        vector = np.array(vector).flatten()
+        combinged_vectors.append(vector)
+        combined_weights.append(weights["watched"] / len(watched_embeddings))
 
-    all_vecs = np.stack(all_vecs)
-    all_weights = np.array(all_weights).reshape(-1, 1)
+    combinged_vectors = np.stack(combinged_vectors)
+    combined_weights = np.array(combined_weights).reshape(-1, 1)
 
-    weighted_avg = np.sum(all_vecs * all_weights, axis=0) / np.sum(all_weights)
+    weighted_avg = np.sum(combinged_vectors * combined_weights, axis=0) / np.sum(combined_weights)
     return [weighted_avg.tolist()]
 
 def weighted_mean_embedding_basic(query, genre, model, weights):
-    query_vec = np.array(model.encode(query))
+    query_vector = np.array(model.encode(query))
     if isinstance(genre, list):
         if genre:
-            genre_vecs = np.array(model.encode(genre))
-            genre_vec = np.mean(genre_vecs, axis=0)
+            genre_vector = np.array(model.encode(genre))
+            genre_vector = np.mean(genre_vector, axis=0)
         else:
-            genre_vec = np.zeros_like(query_vec)
+            genre_vector = np.zeros_like(query_vector)
     else:
-        genre_vec = np.array(model.encode(genre))
+        genre_vector = np.array(model.encode(genre))
     
-    all_vecs = np.stack([query_vec, genre_vec])
-    all_weights = np.array([weights["query"], weights["genre"]]).reshape(-1, 1)
+    combinged_vectors = np.stack([query_vector, genre_vector])
+    combined_weights = np.array([weights["query"], weights["genre"]]).reshape(-1, 1)
     
-    weighted_avg = np.sum(all_vecs * all_weights, axis=0) / np.sum(all_weights)
+    weighted_avg = np.sum(combinged_vectors * combined_weights, axis=0) / np.sum(combined_weights)
     return [weighted_avg.tolist()]
